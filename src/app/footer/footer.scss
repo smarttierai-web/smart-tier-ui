@@ -1,0 +1,64 @@
+.footer {
+  border-top: 1px solid var(--border-color);
+}
+
+.cta-card {
+  max-width: 900px;
+  margin: 0 auto;
+  border-color: var(--border-color);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--accent-indigo);
+  }
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--border-color);
+}
+
+// Modal styles for beta sign up
+.dialog-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.dialog-content {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 1rem;
+  border-color: var(--border-color);
+}
+
+.input-email {
+  font-family: var(--font-sans);
+  width: 100%;
+  font-size: 1rem;
+  outline: none;
+  transition: var(--transition-fast);
+
+  &:focus {
+    border-color: var(--accent-indigo);
+    box-shadow: 0 0 0 2px var(--accent-indigo-light);
+  }
+}
+
+.text-emerald {
+  color: #059669;
+}

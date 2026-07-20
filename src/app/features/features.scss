@@ -1,0 +1,24 @@
+.features-section {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.feature-card {
+  transition: var(--transition-normal);
+  min-height: 240px;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--accent-indigo);
+  }
+}
+
+.card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background-color: var(--accent-indigo-light);
+}

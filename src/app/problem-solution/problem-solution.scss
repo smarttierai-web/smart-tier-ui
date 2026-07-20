@@ -1,0 +1,36 @@
+.problem-solution-section {
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.comparison-card {
+  transition: var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  
+  &.old-way {
+    border-color: var(--border-color);
+  }
+  
+  &.smarttier-way {
+    border-color: var(--accent-indigo);
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background-color: var(--accent-indigo);
+    }
+  }
+}
+
+.icon-cross, .icon-check {
+  flex-shrink: 0;
+  padding: 0 0.5rem 0 0;
+}

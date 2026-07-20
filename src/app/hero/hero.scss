@@ -1,0 +1,301 @@
+.hero-section {
+  padding-top: 10rem;
+  padding-bottom: 7rem;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+}
+
+.ambient-glow {
+  position: absolute;
+  top: -300px;
+  left: -200px;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-container {
+  position: relative;
+  z-index: 2;
+}
+
+.text-6xl {
+  font-size: 3.75rem;
+  letter-spacing: -0.03em;
+  
+  @media (max-width: 768px) {
+    font-size: 2.75rem;
+  }
+}
+
+.link-works {
+  color: var(--text-charcoal);
+  transition: var(--transition-fast);
+  padding: 0.5rem 0;
+  text-decoration: none;
+  border: none;
+  
+  &:hover {
+    color: var(--accent-indigo);
+  }
+}
+
+.hero-right {
+  position: relative;
+  height: 440px;
+  
+  @media (max-width: 1024px) {
+    margin-top: 5rem;
+    height: 420px;
+  }
+}
+
+// Blurred circle overlay behind mockup
+.bg-blur-circle {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background-color: rgba(99, 102, 241, 0.08);
+  filter: blur(60px);
+  z-index: 1;
+  right: 15%;
+  top: 15%;
+}
+
+.mockup-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  height: 100%;
+  z-index: 2;
+}
+
+// Admin Dashboard CSS Representation
+.mockup-dashboard {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  width: 520px;
+  height: 380px;
+  z-index: 2;
+  border: 1px solid rgba(17, 24, 39, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  
+  .dashboard-layout {
+    display: flex;
+    height: 100%;
+  }
+
+  .sidebar {
+    width: 50px;
+    background-color: #0F172A;
+    height: 100%;
+    flex-shrink: 0;
+    
+    .sidebar-logo {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background-color: var(--accent-indigo);
+    }
+
+    .menu-icon {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      background-color: #334155;
+      opacity: 0.6;
+      
+      &.active {
+        background-color: var(--accent-indigo);
+        opacity: 1;
+      }
+    }
+
+    .avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background-color: #475569;
+    }
+  }
+
+  .main-content {
+    flex-grow: 1;
+    background-color: var(--bg-primary);
+    overflow: hidden;
+    min-width: 0; // Ensures child metrics can shrink correctly without overflowing
+  }
+
+  .btn-add {
+    background-color: var(--accent-indigo);
+    color: white;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 10px;
+    
+    &:hover {
+      background-color: var(--accent-indigo-hover);
+    }
+  }
+
+  .tab-item {
+    cursor: pointer;
+    padding-bottom: 4px;
+    
+    &.active {
+      border-bottom: 2px solid var(--accent-indigo);
+    }
+  }
+
+  .metrics-row {
+    width: 100%;
+  }
+
+  .metric-box {
+    border-color: rgba(17, 24, 39, 0.05);
+    background-color: var(--bg-secondary);
+    
+    .metric-label {
+      font-size: 8px;
+      font-weight: 500;
+    }
+    .metric-value {
+      font-size: 12px;
+      line-height: 1.2;
+    }
+    .metric-subtext {
+      font-size: 7px;
+    }
+  }
+
+  .table-container {
+    border-color: rgba(17, 24, 39, 0.05);
+    background-color: var(--bg-primary);
+  }
+
+  table th, table td {
+    padding: 0.35rem 0.5rem !important;
+  }
+
+  .user-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #10B981;
+    display: inline-block;
+    margin-right: 3px;
+    vertical-align: middle;
+  }
+
+  .badge-status {
+    display: inline-block;
+    padding: 0.1rem 0.3rem;
+    font-size: 8px;
+    font-weight: 600;
+    border-radius: 4px;
+    background-color: var(--bg-secondary);
+    color: var(--text-slate);
+    border: 1px solid var(--border-color);
+  }
+
+  @media (max-width: 640px) {
+    width: 100%;
+    height: 350px;
+  }
+}
+
+// High Fidelity Phone Overlay
+.mockup-phone {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 200px;
+  height: 350px;
+  z-index: 3;
+  border: 6px solid var(--text-charcoal);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(17, 24, 39, 0.15);
+  
+  .phone-screen {
+    height: 100%;
+    background-color: #F9FAFB;
+  }
+
+  .phone-notch {
+    width: 50px;
+    height: 12px;
+    background-color: var(--text-charcoal);
+    border-radius: 6px;
+  }
+
+  .back-btn, .bell-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: white;
+    border: 1px solid rgba(17, 24, 39, 0.05);
+    color: var(--text-slate);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gift-box-card {
+    background-color: #FCE7F3; /* Pink background matching target mockup */
+    border: 1px solid rgba(244, 63, 94, 0.1);
+  }
+
+  .gift-box-image {
+    height: 80px;
+  }
+
+  .c-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #D1D5DB;
+    
+    &.active {
+      background-color: var(--accent-indigo);
+      width: 8px;
+      border-radius: 2px;
+    }
+  }
+
+  .mini-img {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background-color: #EEF2FF;
+  }
+
+  .mini-card {
+    border-color: rgba(17, 24, 39, 0.05);
+  }
+
+  .tab-icon {
+    cursor: pointer;
+    opacity: 0.6;
+    font-size: 0.85rem;
+    
+    &.active {
+      opacity: 1;
+      color: var(--accent-indigo);
+    }
+  }
+
+  @media (max-width: 640px) {
+    display: none; // Hide mobile phone view on small mobile viewports to prevent layout overlap
+  }
+}
+
+.text-xxs {
+  font-size: 0.65rem;
+}

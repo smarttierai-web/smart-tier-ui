@@ -1,0 +1,35 @@
+<header class="navbar-header">
+  <div class="container navbar-container flex justify-between items-center py-4 px-8 bg-white">
+    <!-- Logo -->
+    <a href="#" class="logo flex items-center">
+      <span class="logo-text font-display font-bold text-2xl text-charcoal">SmartTier</span>
+    </a>
+
+    <!-- Desktop Menu -->
+    <nav class="desktop-menu flex items-center gap-8">
+      <a href="#how-it-works" class="menu-link font-medium">How It Works</a>
+      <a href="#features" class="menu-link font-medium">Features</a>
+      <a href="#pricing" class="menu-link font-medium">Pricing</a>
+    </nav>
+
+    <!-- CTA Button -->
+    <div class="desktop-cta">
+      <a href="#cta-footer" class="btn btn-dark btn-sm">Apply for Beta Pilot</a>
+    </div>
+
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" (click)="toggleMenu()" aria-label="Toggle Navigation">
+      <span class="bar" [class.open]="isOpen"></span>
+      <span class="bar" [class.open]="isOpen"></span>
+      <span class="bar" [class.open]="isOpen"></span>
+    </button>
+  </div>
+
+  <!-- Mobile Dropdown Menu -->
+  <div class="mobile-dropdown" [class.active]="isOpen">
+    <a href="#how-it-works" (click)="closeMenu()" class="mobile-link">How It Works</a>
+    <a href="#features" (click)="closeMenu()" class="mobile-link">Features</a>
+    <a href="#pricing" (click)="closeMenu()" class="mobile-link">Pricing</a>
+    <a href="#cta-footer" (click)="closeMenu()" class="mobile-link btn btn-dark mt-4">Apply for Beta Pilot</a>
+  </div>
+</header>

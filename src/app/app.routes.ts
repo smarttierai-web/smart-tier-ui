@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { LandingComponent } from './landing';
-import { AdminComponent } from './admin';
-import { ClaimComponent } from './claim';
+import { LandingComponent } from './landing/landing';
+import { AdminComponent } from './admin/admin';
+import { ClaimComponent } from './claim/claim';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },

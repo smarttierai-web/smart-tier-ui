@@ -1,0 +1,118 @@
+<div class="claim-layout flex flex-col min-h-screen bg-slate animate-fade-in">
+  <!-- Header -->
+  <header class="navbar-header py-4 px-8 bg-white border-b shadow-sm">
+    <div class="container flex justify-between items-center max-w-5xl mx-auto">
+      <!-- Logo -->
+      <div class="logo flex items-center gap-3">
+        <div class="logo-icon flex items-center justify-center">
+          <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M70 25C70 16.7157 63.2843 10 55 10H30C21.7157 10 15 16.7157 15 25V40C15 48.2843 21.7157 55 30 55H70V25Z" fill="url(#logoGrad1)" />
+            <path d="M30 75C30 83.2843 36.7157 90 45 90H70C78.2843 90 85 83.2843 85 75V60C85 51.7157 78.2843 45 70 45H30V75Z" fill="url(#logoGrad2)" />
+            <defs>
+              <linearGradient id="logoGrad1" x1="15" y1="10" x2="70" y2="55" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#8B5CF6" />
+                <stop offset="1" stop-color="#6366F1" />
+              </linearGradient>
+              <linearGradient id="logoGrad2" x1="30" y1="45" x2="85" y2="90" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366F1" />
+                <stop offset="1" stop-color="#3B82F6" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="logo-text font-display font-extrabold text-xl">SmartTier</span>
+      </div>
+
+      <!-- Badge -->
+      <span class="badge badge-emerald flex items-center gap-1.5">
+        <span class="pulse-dot"></span>
+        <span>Secure Gifting Link</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- Main Body Container -->
+  <main class="flex-1 flex items-center justify-center p-6 md:p-12">
+    <!-- Selection State -->
+    <div *ngIf="!isConfirmed" class="claim-card max-w-4xl w-full bg-white p-8 md:p-12 rounded-xl shadow-floating text-center border-thin">
+      <div class="greeting mb-8">
+        <h1 class="text-4xl font-extrabold text-charcoal font-display leading-tight">
+          A Special Gift for You, {{ employeeName }}!
+        </h1>
+        <p class="text-sm md:text-base text-slate mt-2 max-w-xl mx-auto">
+          {{ companyName }} celebrates your hard work and contribution.
+        </p>
+      </div>
+
+      <div class="tier-indicator mb-6 flex justify-between items-center pb-3 border-b max-w-2xl mx-auto">
+        <span class="text-xs font-bold text-slate uppercase tracking-wider">Choice Grid \${{ selectedTier }} Tier</span>
+        <span class="badge">Select 1 Option</span>
+      </div>
+
+      <!-- Cards Grid -->
+      <div class="grid grid-3 gap-6 max-w-3xl mx-auto my-8">
+        <div 
+          *ngFor="let choice of getChoicesForTier()" 
+          class="claim-choice-card border-thin p-6 rounded-lg transition-all flex flex-col items-center gap-4 cursor-pointer text-center relative"
+          [class.active]="selectedChoice === choice"
+          (click)="selectChoice(choice)"
+        >
+          <!-- Selection indicator checkmark badge -->
+          <div *ngIf="selectedChoice === choice" class="active-check-badge flex items-center justify-center">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+
+          <!-- Choice SVG Icon -->
+          <div class="choice-icon-circle flex items-center justify-center" [style.backgroundColor]="choice.iconBg">
+            <span [innerHTML]="getSafeHtml(choice.iconSvg)" class="svg-container"></span>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="choice-title font-bold text-sm text-charcoal">{{ choice.title }}</span>
+            <span class="choice-subtext text-xxs font-semibold uppercase tracking-wider opacity-75">Claimable</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Confirmation -->
+      <div class="flex flex-col items-center gap-3 mt-8">
+        <button 
+          type="button" 
+          class="btn btn-primary btn-confirm py-4 px-12"
+          [disabled]="!selectedChoice"
+          (click)="confirmSelection()"
+        >
+          Confirm My Selection
+        </button>
+        <span class="text-xxs text-slate-400">Claims expire in 30 days. No credit card required.</span>
+      </div>
+    </div>
+
+    <!-- Success Confirmed State -->
+    <div *ngIf="isConfirmed" class="success-card max-w-xl w-full bg-white p-12 rounded-xl shadow-floating text-center border-thin animate-fade-in">
+      <div class="success-icon-wrapper flex items-center justify-center mx-auto mb-6 bg-emerald-50 text-emerald-500 rounded-full animate-float">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      </div>
+      
+      <h2 class="text-3xl font-extrabold text-charcoal font-display">Selection Confirmed!</h2>
+      <p class="text-sm text-slate mt-4 leading-relaxed max-w-sm mx-auto">
+        Awesome choice, {{ employeeName }}! We have successfully reserved your <strong>{{ selectedChoice?.title }}</strong>.
+      </p>
+      <p class="text-xs text-slate-400 mt-2 leading-relaxed max-w-sm mx-auto">
+        Your redemption code and access instructions have been sent to your professional mailbox.
+      </p>
+
+      <div class="divider border-b my-8"></div>
+
+      <div class="flex justify-center gap-4">
+        <button type="button" class="btn btn-secondary shadow-sm" (click)="resetClaim()">
+          Change Selection
+        </button>
+      </div>
+    </div>
+  </main>
+</div>

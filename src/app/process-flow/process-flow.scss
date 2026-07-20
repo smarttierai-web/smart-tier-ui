@@ -1,0 +1,36 @@
+.process-flow-section {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.step-card {
+  position: relative;
+  transition: var(--transition-normal);
+  height: 100%;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+}
+
+.step-badge-num {
+  font-size: 2.5rem;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.tier-pill {
+  font-size: 0.85rem;
+  padding: 0.35rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-slate);
+  background-color: var(--bg-primary);
+  transition: var(--transition-fast);
+  
+  &.active {
+    background-color: var(--accent-indigo);
+    color: white;
+    border-color: var(--accent-indigo);
+  }
+}
