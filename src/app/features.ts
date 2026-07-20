@@ -1,0 +1,125 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-features',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <section id="features" class="section bg-white features-section">
+      <div class="container">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+          <span class="badge mb-3">Features</span>
+          <h2 class="text-4xl font-extrabold text-charcoal">
+            Built for Modern HR & Finance Teams
+          </h2>
+          <p class="text-lg text-slate mt-4 max-w-xl mx-auto">
+            Zero-overhead administration meets enterprise-grade financial control. Here is everything you get.
+          </p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid grid-4 gap-6">
+          
+          <!-- Card 1: Pay-As-You-Claim Billing -->
+          <div class="feature-card border-thin bg-white rounded-lg p-6 shadow-card flex flex-col justify-between">
+            <div class="card-icon mb-6">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-indigo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-charcoal mb-2 font-display">Pay-As-You-Claim Billing</h3>
+              <p class="text-sm text-slate">
+                Eliminate wasted spend completely. You only get billed when your employees actively select and claim a reward.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 2: Global Catalog Integration -->
+          <div class="feature-card border-thin bg-white rounded-lg p-6 shadow-card flex flex-col justify-between">
+            <div class="card-icon mb-6">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-indigo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-charcoal mb-2 font-display">Global Catalog</h3>
+              <p class="text-sm text-slate">
+                Scale dynamically across regions and currencies. Automatically serve localized rewards tailored to your employee's local market.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 3: One-Click HR CSV Upload -->
+          <div class="feature-card border-thin bg-white rounded-lg p-6 shadow-card flex flex-col justify-between">
+            <div class="card-icon mb-6">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-indigo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-charcoal mb-2 font-display">One-Click CSV Upload</h3>
+              <p class="text-sm text-slate">
+                Zero complicated software setup or heavy API integration required. Upload a CSV spreadsheet of emails to launch immediately.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 4: Tax & Compliance Audit Logs -->
+          <div class="feature-card border-thin bg-white rounded-lg p-6 shadow-card flex flex-col justify-between">
+            <div class="card-icon mb-6">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-indigo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-charcoal mb-2 font-display">Tax & Compliance</h3>
+              <p class="text-sm text-slate">
+                Instantly download finance-ready reports. Track exact spends, claimed items, and taxable benefit compliance metrics dynamically.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  `,
+  styles: [`
+    .features-section {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .feature-card {
+      transition: var(--transition-normal);
+      min-height: 240px;
+      
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-hover);
+        border-color: var(--accent-indigo);
+      }
+    }
+
+    .card-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background-color: var(--accent-indigo-light);
+    }
+  `]
+})
+export class FeaturesComponent {}

@@ -1,0 +1,166 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-problem-solution',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <section id="how-it-works" class="section bg-white problem-solution-section">
+      <div class="container">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+          <span class="badge mb-3">Modern Approach</span>
+          <h2 class="text-4xl font-extrabold text-charcoal">
+            The Smart Way to Reward Teams
+          </h2>
+          <p class="text-lg text-slate mt-4 max-w-xl mx-auto">
+            Traditional corporate gifting is broken. We rebuilt it to focus on automation, choice, and absolute cost efficiency.
+          </p>
+        </div>
+
+        <!-- Comparison Grid -->
+        <div class="grid grid-2 gap-8 items-stretch">
+          
+          <!-- Column 1: The Old Way -->
+          <div class="comparison-card old-way border-thin rounded-lg p-8 bg-slate">
+            <div class="card-header mb-6">
+              <span class="text-xs font-bold text-muted uppercase tracking-wider">Traditional Gifting</span>
+              <h3 class="text-2xl font-bold text-charcoal mt-1">The Old Way</h3>
+            </div>
+            
+            <ul class="pain-points flex flex-col gap-5">
+              <li class="flex items-start gap-3">
+                <span class="icon-cross mt-1">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                  </svg>
+                </span>
+                <div>
+                  <h4 class="text-base font-semibold text-charcoal">Manual Address Chasing</h4>
+                  <p class="text-sm text-slate mt-1">Wasting hours tracking down delivery details, fixing typos, and dealing with returned mail.</p>
+                </div>
+              </li>
+
+              <li class="flex items-start gap-3">
+                <span class="icon-cross mt-1">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                  </svg>
+                </span>
+                <div>
+                  <h4 class="text-base font-semibold text-charcoal">High Administrative Friction</h4>
+                  <p class="text-sm text-slate mt-1">Configuring logistics, tracking individual packages, and manually processing single custom orders.</p>
+                </div>
+              </li>
+
+              <li class="flex items-start gap-3">
+                <span class="icon-cross mt-1">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                  </svg>
+                </span>
+                <div>
+                  <h4 class="text-base font-semibold text-charcoal">Wasted Budget on Unused Cards</h4>
+                  <p class="text-sm text-slate mt-1">Paying 100% upfront for cards and physical items that get lost in transit or sit forgotten in inboxes.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 2: The SmartTier Way -->
+          <div class="comparison-card smarttier-way border-thin rounded-lg p-8 bg-white shadow-floating">
+            <div class="card-header mb-6">
+              <span class="badge mb-1">Recommended</span>
+              <h3 class="text-2xl font-bold text-charcoal mt-1">The SmartTier Way</h3>
+            </div>
+            
+            <ul class="benefits flex flex-col gap-5">
+              <li class="flex items-start gap-3">
+                <span class="icon-check mt-1">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <div>
+                  <h4 class="text-base font-semibold text-charcoal">Total Logistics Automation</h4>
+                  <p class="text-sm text-slate mt-1">Recipients claim gifts through simple links. No addresses needed beforehand. We handle all global delivery details.</p>
+                </div>
+              </li>
+
+              <li class="flex items-start gap-3">
+                <span class="icon-check mt-1">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <div>
+                  <h4 class="text-base font-semibold text-charcoal">Immediate Budget Control</h4>
+                  <p class="text-sm text-slate mt-1">Set campaign limits and spending rules instantly. No surprise fees, no complex onboarding, no setups.</p>
+                </div>
+              </li>
+
+              <li class="flex items-start gap-3">
+                <span class="icon-check mt-1">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <div>
+                  <h4 class="text-base font-semibold text-charcoal">100% Refunds on Unclaimed Links</h4>
+                  <p class="text-sm text-slate mt-1">If an employee doesn't claim their link within 30 days, the budget goes right back to your company credit balance.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  `,
+  styles: [`
+    .problem-solution-section {
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .comparison-card {
+      transition: var(--transition-normal);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      
+      &.old-way {
+        border-color: var(--border-color);
+      }
+      
+      &.smarttier-way {
+        border-color: var(--accent-indigo);
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background-color: var(--accent-indigo);
+        }
+      }
+    }
+
+    .icon-cross, .icon-check {
+      flex-shrink: 0;
+      padding: 0 0.5rem 0 0;
+    }
+  `]
+})
+export class ProblemSolutionComponent { }
