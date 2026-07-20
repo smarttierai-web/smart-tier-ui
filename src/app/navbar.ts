@@ -53,35 +53,59 @@ import { CommonModule } from '@angular/common';
     }
 
     .navbar-container {
-      box-shadow: 0 12px 34px -10px rgba(17, 24, 39, 0.06), 0 2px 8px -2px rgba(17, 24, 39, 0.02);
-      border: 1px solid rgba(17, 24, 39, 0.05);
+      box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.08), 0 1px 3px rgba(99, 102, 241, 0.02);
+      border: 1px solid rgba(99, 102, 241, 0.08);
       max-width: 1200px;
       margin: 0 auto;
-      border-radius: 12px;
-      padding: 1.3rem;
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(16px);
+      background-color: rgba(255, 255, 255, 0.8) !important;
     }
 
     .menu-link {
       color: var(--text-slate);
       font-size: 0.95rem;
-      transition: var(--transition-fast);
+      transition: all var(--transition-fast);
+      position: relative;
+      padding: 0.25rem 0;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--gradient-primary);
+        transform: scaleX(0);
+        transition: transform var(--transition-fast);
+        transform-origin: right center;
+      }
 
       &:hover {
-        color: var(--text-charcoal);
+        color: var(--accent-indigo);
+        
+        &::after {
+          transform: scaleX(1);
+          transform-origin: left center;
+        }
       }
     }
 
     .btn-dark {
-      background-color: #0F172A;
+      background: var(--gradient-primary);
       color: #FFFFFF !important;
-      border-radius: 6px;
-      padding: 0.65rem 1.3rem;
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 1.5rem;
       font-weight: 600;
       font-size: 0.9rem;
-      transition: var(--transition-fast);
+      transition: all var(--transition-fast);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
 
       &:hover {
-        background-color: #1E293B;
+        background: var(--gradient-hover);
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
+        transform: translateY(-1px);
       }
     }
 
