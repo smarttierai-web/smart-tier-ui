@@ -67,187 +67,491 @@
 
     <!-- Main Body -->
     <main class="panel-content p-8 flex-1">
-      <div class="creator-grid">
-        
-        <!-- Left Column: Creator Form -->
-        <div class="creator-form-col flex flex-col gap-6">
-          <div class="heading-block">
-            <h2 class="form-title text-3xl font-extrabold text-charcoal leading-tight">Create Reward Campaign</h2>
-            <p class="form-subtitle text-sm text-slate mt-1">Configure budget limits and upload team rosters to distribute links.</p>
+      
+      <!-- TAB 1: DASHBOARD (CAMPAIGN CREATOR) -->
+      <div *ngIf="activeTab === 'Dashboard'" class="animate-fade-in">
+        <div class="creator-grid">
+          
+          <!-- Left Column: Creator Form -->
+          <div class="creator-form-col flex flex-col gap-6">
+            <div class="heading-block">
+              <h2 class="form-title text-3xl font-extrabold text-charcoal leading-tight">Create Reward Campaign</h2>
+              <p class="form-subtitle text-sm text-slate mt-1">Configure budget limits and upload team rosters to distribute links.</p>
+            </div>
+            
+            <!-- Tier Selector -->
+            <div class="form-section card-premium p-6">
+              <label class="section-label text-xs font-bold text-slate mb-4 block uppercase tracking-wider">Choose a budget tier</label>
+              <div class="tier-buttons-container flex gap-4">
+                <button 
+                  *ngFor="let tier of tiers" 
+                  type="button"
+                  class="tier-btn flex-1 py-4 px-4 rounded-lg font-bold text-center border-thin transition-all flex flex-col items-center justify-center gap-1"
+                  [class.active]="tier.val === selectedTier"
+                  (click)="selectTier(tier.val)"
+                >
+                  <span class="tier-val font-display text-xl">{{ formatCurrency(tier.val) }}</span>
+                  <span class="tier-lvl text-xxs font-normal uppercase opacity-75">Budget Limit</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- CSV Uploader -->
+            <div class="form-section card-premium p-6">
+              <label class="section-label text-xs font-bold text-slate mb-4 block uppercase tracking-wider">Upload Employee List (CSV)</label>
+              
+              <div 
+                class="upload-dropzone flex flex-col items-center justify-center p-8 rounded-lg text-center transition-all"
+                [class.dragover]="isDragging"
+                (dragover)="onDragOver($event)"
+                (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event)"
+                (click)="fileInput.click()"
+              >
+                <input 
+                  #fileInput 
+                  type="file" 
+                  accept=".csv" 
+                  class="hidden" 
+                  (change)="onFileSelected($event)" 
+                />
+                
+                <div class="upload-icon-wrapper mb-3 text-indigo">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-svg">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" class="arrow" />
+                    <line x1="12" y1="3" x2="12" y2="15" class="arrow" />
+                  </svg>
+                </div>
+                
+                <span class="upload-text text-sm font-bold text-charcoal mb-1">
+                  Drag & drop or click to upload
+                </span>
+                <span class="upload-subtext text-xs text-slate">
+                  Required columns: <code class="code-tag">Name</code>, <code class="code-tag">Email</code>
+                </span>
+                
+                <button type="button" class="btn btn-secondary btn-sm mt-4 shadow-sm">
+                  Select File
+                </button>
+              </div>
+
+              <!-- File Success Message -->
+              <div *ngIf="uploadedFileName" class="upload-success mt-4 flex items-center justify-between p-4 bg-emerald-50 border border-emerald-100 rounded-lg animate-fade-in">
+                <div class="flex items-center gap-3 text-emerald-800 text-xs font-semibold">
+                  <div class="emerald-dot-pulse"></div>
+                  <span>Loaded: <strong>{{ uploadedFileName }}</strong> ({{ parsedCount }} employees)</span>
+                </div>
+                <button (click)="clearUploadedFile($event)" class="clear-btn text-xs text-emerald-700 hover:text-emerald-950 font-bold">Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Curated Choices Panel -->
+          <div class="curated-choices-col">
+            <div class="curated-card p-6 bg-white rounded-lg shadow-card flex flex-col justify-between">
+              <div class="card-header flex items-center justify-between mb-4 pb-2 border-b">
+                <div class="flex flex-col">
+                  <h3 class="card-title text-xs font-bold text-slate uppercase tracking-wider">Available Rewards</h3>
+                  <span class="card-subtitle text-xs text-slate-400 mt-0.5">Matching current tier ({{ getTierCurrency() }})</span>
+                </div>
+                <a href="javascript:void(0)" class="see-all-link text-xs font-bold text-indigo flex items-center gap-1">
+                  <span>Catalog</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
+              </div>
+
+              <!-- Choices Container -->
+              <div class="choices-list flex flex-col gap-4">
+                <div *ngFor="let choice of getChoicesForTier()" class="choice-item flex items-center gap-4 p-3 rounded-lg border-thin">
+                  <!-- Choice Image/Icon -->
+                  <div class="choice-visual flex-shrink-0">
+                    <img *ngIf="choice.type === 'image'" [src]="choice.image" class="choice-image rounded-md" alt="{{ choice.title }}" />
+                    <div *ngIf="choice.type === 'icon'" class="choice-icon flex items-center justify-center rounded-md" [style.backgroundColor]="choice.iconBg">
+                      <span [innerHTML]="getSafeHtml(choice.iconSvg)" class="svg-container"></span>
+                    </div>
+                  </div>
+                  <!-- Choice Info -->
+                  <div class="choice-info flex-1">
+                    <h4 class="choice-name text-sm font-bold text-charcoal">{{ choice.title }}</h4>
+                    <span class="choice-badge text-xxs font-medium uppercase opacity-75">Curated</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Table Section: Employee List -->
+        <div class="employee-table-section mt-8 bg-white rounded-lg border-thin shadow-card overflow-hidden">
+          <div class="table-header-bar flex items-center justify-between p-5 border-b bg-gray-50">
+            <div class="flex flex-col">
+              <span class="table-title font-display font-bold text-lg text-charcoal">Recipients List</span>
+              <span class="table-subtitle text-xs text-slate mt-0.5">All employees to receive reward access links.</span>
+            </div>
+            <span class="badge badge-indigo" *ngIf="employees.length > 0">{{ employees.length }} Employees</span>
           </div>
           
-          <!-- Tier Selector -->
-          <div class="form-section card-premium p-6">
-            <label class="section-label text-xs font-bold text-slate mb-4 block uppercase tracking-wider">Choose a budget tier</label>
-            <div class="tier-buttons-container flex gap-4">
-              <button 
-                *ngFor="let tier of tiers" 
-                type="button"
-                class="tier-btn flex-1 py-4 px-4 rounded-lg font-bold text-center border-thin transition-all flex flex-col items-center justify-center gap-1"
-                [class.active]="tier.val === selectedTier"
-                (click)="selectTier(tier.val)"
-              >
-                <span class="tier-val font-display text-xl">\${{ tier.val }}</span>
-                <span class="tier-lvl text-xxs font-normal uppercase opacity-75">Budget Limit</span>
-              </button>
-            </div>
+          <div class="table-container">
+            <table class="employee-table">
+              <thead>
+                <tr>
+                  <th class="sortable-header" (click)="toggleSort()">
+                    <div class="flex items-center gap-2">
+                      <span>Name</span>
+                      <svg class="sort-icon" [class.asc]="sortAsc" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th>Work Email</th>
+                  <th>Campaign Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let emp of employees" class="table-row">
+                  <td>
+                    <div class="flex items-center gap-3">
+                      <img [src]="emp.avatar" class="emp-avatar" alt="{{ emp.name }}" />
+                      <span class="emp-name font-semibold text-charcoal">{{ emp.name }}</span>
+                    </div>
+                  </td>
+                  <td class="emp-email text-slate font-medium">{{ emp.email }}</td>
+                  <td>
+                    <input 
+                      type="text" 
+                      [(ngModel)]="emp.campaignName" 
+                      class="campaign-input text-sm rounded-md border-thin px-3 py-2 w-full"
+                      placeholder="e.g. Q2 Outstanding Performance" 
+                    />
+                  </td>
+                </tr>
+                <tr *ngIf="employees.length === 0">
+                  <td colspan="3" class="empty-table-state py-12 text-center text-slate">
+                    <div class="flex flex-col items-center gap-2">
+                      <span class="text-3xl">👥</span>
+                      <span class="font-bold text-charcoal">No employees loaded</span>
+                      <span class="text-xs max-w-xs text-slate-400">Drag & drop a CSV file or click the upload box above to load recipients.</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <!-- CSV Uploader -->
-          <div class="form-section card-premium p-6">
-            <label class="section-label text-xs font-bold text-slate mb-4 block uppercase tracking-wider">Upload Employee List (CSV)</label>
-            
-            <div 
-              class="upload-dropzone flex flex-col items-center justify-center p-8 rounded-lg text-center transition-all"
-              [class.dragover]="isDragging"
-              (dragover)="onDragOver($event)"
-              (dragleave)="onDragLeave($event)"
-              (drop)="onDrop($event)"
-              (click)="fileInput.click()"
+          <!-- Distribute Action -->
+          <div class="table-actions flex justify-end p-4 border-t bg-gray-50">
+            <button 
+              type="button" 
+              class="btn btn-primary btn-distribute shadow-floating"
+              [disabled]="employees.length === 0"
+              (click)="distributeRewards()"
             >
-              <input 
-                #fileInput 
-                type="file" 
-                accept=".csv" 
-                class="hidden" 
-                (change)="onFileSelected($event)" 
-              />
-              
-              <div class="upload-icon-wrapper mb-3 text-indigo">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-svg">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="17 8 12 3 7 8" class="arrow" />
-                  <line x1="12" y1="3" x2="12" y2="15" class="arrow" />
-                </svg>
-              </div>
-              
-              <span class="upload-text text-sm font-bold text-charcoal mb-1">
-                Drag & drop or click to upload
-              </span>
-              <span class="upload-subtext text-xs text-slate">
-                Required columns: <code class="code-tag">Name</code>, <code class="code-tag">Email</code>
-              </span>
-              
-              <button type="button" class="btn btn-secondary btn-sm mt-4 shadow-sm">
-                Select File
-              </button>
-            </div>
-
-            <!-- File Success Message -->
-            <div *ngIf="uploadedFileName" class="upload-success mt-4 flex items-center justify-between p-4 bg-emerald-50 border border-emerald-100 rounded-lg animate-fade-in">
-              <div class="flex items-center gap-3 text-emerald-800 text-xs font-semibold">
-                <div class="emerald-dot-pulse"></div>
-                <span>Loaded: <strong>{{ uploadedFileName }}</strong> ({{ parsedCount }} employees)</span>
-              </div>
-              <button (click)="clearUploadedFile($event)" class="clear-btn text-xs text-emerald-700 hover:text-emerald-950 font-bold">Clear</button>
-            </div>
+              <span>Distribute Reward Links</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
           </div>
         </div>
-
-        <!-- Right Column: Curated Choices Panel -->
-        <div class="curated-choices-col">
-          <div class="curated-card p-6 bg-white rounded-lg shadow-card flex flex-col justify-between">
-            <div class="card-header flex items-center justify-between mb-4 pb-2 border-b">
-              <div class="flex flex-col">
-                <h3 class="card-title text-xs font-bold text-slate uppercase tracking-wider">Available Rewards</h3>
-                <span class="card-subtitle text-xs text-slate-400 mt-0.5">Matching current tier ({{ getTierCurrency() }})</span>
-              </div>
-              <a href="javascript:void(0)" class="see-all-link text-xs font-bold text-indigo flex items-center gap-1">
-                <span>Catalog</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </a>
-            </div>
-
-            <!-- Choices Container -->
-            <div class="choices-list flex flex-col gap-4">
-              <div *ngFor="let choice of getChoicesForTier()" class="choice-item flex items-center gap-4 p-3 rounded-lg border-thin">
-                <!-- Choice Image/Icon -->
-                <div class="choice-visual flex-shrink-0">
-                  <img *ngIf="choice.type === 'image'" [src]="choice.image" class="choice-image rounded-md" alt="{{ choice.title }}" />
-                  <div *ngIf="choice.type === 'icon'" class="choice-icon flex items-center justify-center rounded-md" [style.backgroundColor]="choice.iconBg">
-                    <span [innerHTML]="getSafeHtml(choice.iconSvg)" class="svg-container"></span>
-                  </div>
-                </div>
-                <!-- Choice Info -->
-                <div class="choice-info flex-1">
-                  <h4 class="choice-name text-sm font-bold text-charcoal">{{ choice.title }}</h4>
-                  <span class="choice-badge text-xxs font-medium uppercase opacity-75">Curated</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- Table Section: Employee List -->
-      <div class="employee-table-section mt-8 bg-white rounded-lg border-thin shadow-card overflow-hidden">
-        <div class="table-header-bar flex items-center justify-between p-5 border-b bg-gray-50">
-          <div class="flex flex-col">
-            <span class="table-title font-display font-bold text-lg text-charcoal">Recipients List</span>
-            <span class="table-subtitle text-xs text-slate mt-0.5">All employees to receive reward access links.</span>
+      <!-- TAB 2: EMPLOYEES MANAGEMENT -->
+      <div *ngIf="activeTab === 'Employees'" class="animate-fade-in">
+        <!-- Top Metrics Row -->
+        <div class="metrics-summary-row">
+          <div class="metric-box card-premium p-5 flex-1 flex flex-col justify-between">
+            <span class="text-xs font-bold text-slate uppercase tracking-wider">Total Team Roster</span>
+            <div class="flex items-baseline gap-2 mt-2">
+              <span class="text-3xl font-extrabold text-charcoal font-display">{{ employees.length }}</span>
+              <span class="text-xs font-semibold text-emerald-600">Active Directory</span>
+            </div>
           </div>
-          <span class="badge badge-indigo" *ngIf="employees.length > 0">{{ employees.length }} Employees</span>
-        </div>
-        
-        <div class="table-container">
-          <table class="employee-table">
-            <thead>
-              <tr>
-                <th class="sortable-header" (click)="toggleSort()">
-                  <div class="flex items-center gap-2">
-                    <span>Name</span>
-                    <svg class="sort-icon" [class.asc]="sortAsc" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                  </div>
-                </th>
-                <th>Work Email</th>
-                <th>Campaign Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let emp of employees" class="table-row">
-                <td>
-                  <div class="flex items-center gap-3">
-                    <img [src]="emp.avatar" class="emp-avatar" alt="{{ emp.name }}" />
-                    <span class="emp-name font-semibold text-charcoal">{{ emp.name }}</span>
-                  </div>
-                </td>
-                <td class="emp-email text-slate font-medium">{{ emp.email }}</td>
-                <td>
-                  <input 
-                    type="text" 
-                    [(ngModel)]="emp.campaignName" 
-                    class="campaign-input text-sm rounded-md border-thin px-3 py-2 w-full"
-                    placeholder="e.g. Q2 Outstanding Performance" 
-                  />
-                </td>
-              </tr>
-              <tr *ngIf="employees.length === 0">
-                <td colspan="3" class="empty-table-state py-12 text-center text-slate">
-                  <div class="flex flex-col items-center gap-2">
-                    <span class="text-3xl">👥</span>
-                    <span class="font-bold text-charcoal">No employees loaded</span>
-                    <span class="text-xs max-w-xs text-slate-400">Drag & drop a CSV file or click the upload box above to load recipients.</span>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="metric-box card-premium p-5 flex-1 flex flex-col justify-between">
+            <span class="text-xs font-bold text-slate uppercase tracking-wider">Active Allocations</span>
+            <div class="flex items-baseline gap-2 mt-2">
+              <span class="text-3xl font-extrabold text-charcoal font-display">{{ getActiveCampaignCount() }}</span>
+              <span class="text-xs font-semibold text-indigo">Links Drafted</span>
+            </div>
+          </div>
+          <div class="metric-box card-premium p-5 flex-1 flex flex-col justify-between">
+            <span class="text-xs font-bold text-slate uppercase tracking-wider">Average Claim Rate</span>
+            <div class="flex items-baseline gap-2 mt-2">
+              <span class="text-3xl font-extrabold text-charcoal font-display">94.2%</span>
+              <span class="text-xs font-semibold text-emerald-600">+2.4% vs Q1</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Distribute Action -->
-        <div class="table-actions flex justify-end p-4 border-t bg-gray-50">
-          <button 
-            type="button" 
-            class="btn btn-primary btn-distribute shadow-floating"
-            [disabled]="employees.length === 0"
-            (click)="distributeRewards()"
-          >
-            <span>Distribute Reward Links</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-          </button>
+        <div class="subpage-grid">
+          <!-- Left Column: Employees List Table -->
+          <div class="employee-table-section bg-white rounded-lg border-thin shadow-card overflow-hidden">
+            <div class="table-header-bar flex items-center justify-between p-5 border-b bg-gray-50">
+              <div class="flex flex-col">
+                <span class="table-title font-display font-bold text-lg text-charcoal">Employee Database</span>
+                <span class="table-subtitle text-xs text-slate mt-0.5">Manage your team member directories and dispatch instant rewards.</span>
+              </div>
+            </div>
+            
+            <div class="table-container">
+              <table class="employee-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let emp of employees" class="table-row">
+                    <td>
+                      <div class="flex items-center gap-3">
+                        <img [src]="emp.avatar" class="emp-avatar" alt="{{ emp.name }}" />
+                        <span class="emp-name font-semibold text-charcoal">{{ emp.name }}</span>
+                      </div>
+                    </td>
+                    <td class="emp-email text-slate font-medium">{{ emp.email }}</td>
+                    <td>
+                      <div class="flex gap-2">
+                        <button type="button" class="btn-indigo-sm" (click)="sendQuickReward(emp)">
+                          Send ₹5,000 Reward
+                        </button>
+                        <button type="button" class="btn-danger-sm" (click)="removeEmployee(emp)">
+                          Remove
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="employees.length === 0">
+                    <td colspan="3" class="empty-table-state py-12 text-center text-slate">
+                      No employees in the database. Use the sidebar form to add team members.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right Column: Add Employee Panel -->
+          <div class="card-add-employee card-premium p-6 bg-white shadow-card">
+            <h3 class="text-sm font-bold text-slate uppercase tracking-wider mb-4 pb-2 border-b">Add New Team Member</h3>
+            <form (submit)="$event.preventDefault(); addEmployee()" class="flex flex-col gap-4">
+              <div class="form-group">
+                <label class="text-xs font-bold text-slate">Full Name</label>
+                <input type="text" [(ngModel)]="newEmpName" name="newEmpName" class="input-field" placeholder="e.g. Michael Scott" required />
+              </div>
+              <div class="form-group">
+                <label class="text-xs font-bold text-slate">Work Email</label>
+                <input type="email" [(ngModel)]="newEmpEmail" name="newEmpEmail" class="input-field" placeholder="e.g. scott@dundermifflin.com" required />
+              </div>
+              <button type="submit" class="btn btn-primary w-full mt-2 shadow-sm">
+                Add to Database
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: CAMPAIGN HISTORY -->
+      <div *ngIf="activeTab === 'History'" class="animate-fade-in">
+        <!-- Top Metrics Row -->
+        <div class="metrics-summary-row">
+          <div class="metric-box card-premium p-5 flex-1 flex flex-col justify-between">
+            <span class="text-xs font-bold text-slate uppercase tracking-wider">Total Disbursed</span>
+            <div class="flex items-baseline gap-2 mt-2">
+              <span class="text-3xl font-extrabold text-charcoal font-display">₹1,25,000</span>
+              <span class="text-xs font-semibold text-slate-400">Total volume</span>
+            </div>
+          </div>
+          <div class="metric-box card-premium p-5 flex-1 flex flex-col justify-between">
+            <span class="text-xs font-bold text-slate uppercase tracking-wider">Claimed Rewards</span>
+            <div class="flex items-baseline gap-2 mt-2">
+              <span class="text-3xl font-extrabold text-charcoal font-display">₹95,000</span>
+              <span class="text-xs font-semibold text-emerald-600">76% claimed</span>
+            </div>
+          </div>
+          <div class="metric-box card-premium p-5 flex-1 flex flex-col justify-between">
+            <span class="text-xs font-bold text-slate uppercase tracking-wider">Refunded Credits</span>
+            <div class="flex items-baseline gap-2 mt-2">
+              <span class="text-3xl font-extrabold text-charcoal font-display">₹30,000</span>
+              <span class="text-xs font-semibold text-indigo">100% risk-free</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="subpage-full bg-white rounded-lg border-thin shadow-card overflow-hidden">
+          <div class="table-header-bar flex items-center justify-between p-5 border-b bg-gray-50">
+            <div class="flex flex-col">
+              <span class="table-title font-display font-bold text-lg text-charcoal">Campaign Audit Logs</span>
+              <span class="table-subtitle text-xs text-slate mt-0.5">Review campaign records, active links, and auto-refund summaries. Click a row to see recipient details.</span>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <table class="employee-table">
+              <thead>
+                <tr>
+                  <th>Campaign Name</th>
+                  <th>Tier Limit</th>
+                  <th>Date Created</th>
+                  <th>Recipients</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let camp of pastCampaigns">
+                  <tr class="table-row history-campaign-row" (click)="expandCampaign(camp.id)">
+                    <td class="font-bold text-charcoal">
+                      <div class="flex items-center gap-2">
+                        <span>{{ camp.name }}</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" [style.transform]="expandedCampaignId === camp.id ? 'rotate(180deg)' : 'none'" style="transition: transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </div>
+                    </td>
+                    <td class="font-semibold text-slate">₹{{ camp.tier.toLocaleString('en-IN') }}</td>
+                    <td class="text-slate font-medium">{{ camp.date }}</td>
+                    <td class="text-indigo font-bold">{{ camp.claimedCount }} / {{ camp.totalCount }} Claimed</td>
+                    <td>
+                      <span class="badge" [class.badge-success]="camp.status === 'Completed'" [class.badge-info]="camp.status === 'Active'" [class.badge-outline]="camp.status.includes('Expired')">
+                        {{ camp.status }}
+                      </span>
+                    </td>
+                  </tr>
+                  
+                  <!-- Nested details expansion -->
+                  <tr *ngIf="expandedCampaignId === camp.id" class="details-drawer-row">
+                    <td colspan="5" class="p-0">
+                      <div class="details-drawer animate-fade-in">
+                        <h4 class="text-xs font-bold text-slate uppercase tracking-wider mb-3">Recipient Breakdowns</h4>
+                        <table class="details-table">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>Email</th>
+                              <th>Selected Reward</th>
+                              <th>Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let det of camp.details">
+                              <td class="font-semibold text-charcoal">{{ det.name }}</td>
+                              <td class="text-slate">{{ det.email }}</td>
+                              <td class="font-bold text-indigo">{{ det.reward }}</td>
+                              <td>
+                                <span class="badge text-xxs font-bold" [class.badge-success]="det.status === 'Claimed'" [class.badge-warning]="det.status.includes('Sent')" [class.badge-outline]="det.status === 'Expired'">
+                                  {{ det.status }}
+                                </span>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: WALLET & BILLING -->
+      <div *ngIf="activeTab === 'Wallet'" class="animate-fade-in">
+        <div class="subpage-grid">
+          
+          <!-- Left Column: Balance & Recent Transactions -->
+          <div class="flex flex-col gap-6">
+            <!-- Balance Card -->
+            <div class="wallet-balance-card">
+              <div class="flex justify-between items-start">
+                <div class="flex flex-col">
+                  <span class="text-xs uppercase tracking-widest text-indigo-200 font-bold">Company Balance Wallet</span>
+                  <span class="text-4xl font-extrabold font-display mt-2">₹{{ walletBalance.toLocaleString('en-IN') }}.00</span>
+                </div>
+                <div class="card-chip shadow-sm"></div>
+              </div>
+              <div class="flex justify-between items-end mt-8 border-t border-indigo-400 border-opacity-20 pt-4">
+                <div class="flex flex-col">
+                  <span class="text-xxs uppercase tracking-wider text-indigo-200">Account Owner</span>
+                  <span class="text-sm font-bold mt-1">SmartTier Enterprise</span>
+                </div>
+                <div class="flex flex-col text-right">
+                  <span class="text-xxs uppercase tracking-wider text-indigo-200">Escrow Allocations</span>
+                  <span class="text-xs font-bold mt-1">₹15,000.00 Escrowed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Transaction list -->
+            <div class="employee-table-section bg-white rounded-lg border-thin shadow-card overflow-hidden">
+              <div class="table-header-bar flex items-center justify-between p-5 border-b bg-gray-50">
+                <div class="flex flex-col">
+                  <span class="table-title font-display font-bold text-lg text-charcoal">Recent Wallet Transactions</span>
+                  <span class="table-subtitle text-xs text-slate mt-0.5">Audit log of payments, distributions, and automatic unclaimed link refunds.</span>
+                </div>
+              </div>
+              <div class="table-container">
+                <table class="employee-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Description</th>
+                      <th>Type</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let tx of transactions" class="table-row">
+                      <td class="text-slate font-medium">{{ tx.date }}</td>
+                      <td class="font-semibold text-charcoal">{{ tx.desc }}</td>
+                      <td>
+                        <span class="badge" [class.badge-success]="tx.type === 'Top Up'" [class.badge-info]="tx.type === 'Refund'" [class.badge-outline]="tx.type === 'Distribution'">
+                          {{ tx.type }}
+                        </span>
+                      </td>
+                      <td>
+                        <span [class.text-credit]="tx.isCredit" [class.text-debit]="!tx.isCredit">
+                          {{ tx.isCredit ? '+' : '-' }}₹{{ tx.amount.toLocaleString('en-IN') }}
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Add Credit Funds Panel -->
+          <div class="card-add-employee card-premium p-6 bg-white shadow-card">
+            <h3 class="text-sm font-bold text-slate uppercase tracking-wider mb-4 pb-2 border-b">Top Up Wallet</h3>
+            <form (submit)="$event.preventDefault(); topUpWallet()" class="flex flex-col gap-4">
+              <div class="form-group">
+                <label class="text-xs font-bold text-slate">Amount to load (INR)</label>
+                <div class="relative">
+                  <input type="number" [(ngModel)]="topUpAmount" name="topUpAmount" class="input-field w-full pl-8" placeholder="10000" min="500" required />
+                  <span class="absolute left-3 top-3.5 text-slate-400 font-bold text-sm">₹</span>
+                </div>
+              </div>
+              
+              <!-- Quick amounts selectors -->
+              <div class="quick-amounts flex gap-2">
+                <button type="button" class="btn btn-secondary btn-sm flex-1 text-xs py-2 px-1" (click)="topUpAmount = 10000">+₹10k</button>
+                <button type="button" class="btn btn-secondary btn-sm flex-1 text-xs py-2 px-1" (click)="topUpAmount = 25000">+₹25k</button>
+                <button type="button" class="btn btn-secondary btn-sm flex-1 text-xs py-2 px-1" (click)="topUpAmount = 50000">+₹50k</button>
+              </div>
+
+              <div class="form-group mt-2">
+                <label class="text-xs font-bold text-slate">Payment Profile</label>
+                <select class="input-field" style="background-image: none;">
+                  <option>Corporate Visa ending 4242</option>
+                  <option>Corporate NetBanking (SBI)</option>
+                  <option>Add new card...</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-full mt-4 shadow-sm">
+                Add Funds
+              </button>
+            </form>
+          </div>
         </div>
       </div>
 

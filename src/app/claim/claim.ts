@@ -21,7 +21,7 @@ export class ClaimComponent implements OnInit {
   token = '';
   employeeName = 'Alex';
   companyName = 'SmartTier Corp';
-  selectedTier = 50;
+  selectedTier = 5000;
   selectedChoice: RewardChoice | null = null;
   isConfirmed = false;
 
@@ -40,9 +40,9 @@ export class ClaimComponent implements OnInit {
   loadRosterDetails(token: string) {
     // Dynamic mock profiles based on token:
     const profiles: Record<string, { name: string; company: string; tier: number }> = {
-      'alex': { name: 'Alex', company: 'TechNova Solutions', tier: 50 },
-      'sarah': { name: 'Sarah', company: 'Apex Global Web', tier: 100 },
-      'john': { name: 'John', company: 'Zenith Logistics', tier: 25 },
+      'alex': { name: 'Alex', company: 'TechNova Solutions', tier: 5000 },
+      'sarah': { name: 'Sarah', company: 'Apex Global Web', tier: 10000 },
+      'john': { name: 'John', company: 'Zenith Logistics', tier: 2500 },
     };
 
     const userProfile = profiles[token.toLowerCase()];
@@ -54,7 +54,7 @@ export class ClaimComponent implements OnInit {
       // Default fallback
       this.employeeName = token.charAt(0).toUpperCase() + token.slice(1) || 'Valued Employee';
       this.companyName = 'Your Company';
-      this.selectedTier = 50; // default to $50
+      this.selectedTier = 5000; // default to ₹5,000
     }
   }
 
@@ -81,8 +81,12 @@ export class ClaimComponent implements OnInit {
     return this.rewardCatalog[this.selectedTier] || [];
   }
 
+  formatCurrency(val: number): string {
+    return '₹' + val.toLocaleString('en-IN');
+  }
+
   rewardCatalog: Record<number, RewardChoice[]> = {
-    25: [
+    2500: [
       {
         title: 'Gourmet Chocolate Box',
         iconBg: '#FEF3C7',
@@ -111,9 +115,9 @@ export class ClaimComponent implements OnInit {
         </svg>`
       }
     ],
-    50: [
+    5000: [
       {
-        title: 'Amazon Voucher ($50)',
+        title: 'Amazon Voucher (₹5,000)',
         iconBg: '#EEF2FF',
         iconSvg: `<svg viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="6" width="20" height="12" rx="2" />
@@ -168,7 +172,7 @@ export class ClaimComponent implements OnInit {
         </svg>`
       }
     ],
-    100: [
+    10000: [
       {
         title: 'Wireless Active Earbuds',
         iconBg: '#EEF2FF',

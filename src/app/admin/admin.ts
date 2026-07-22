@@ -32,7 +32,7 @@ interface RewardChoice {
 })
 export class AdminComponent {
   activeTab = 'Dashboard';
-  selectedTier = 50;
+  selectedTier = 5000;
   isDragging = false;
   uploadedFileName = '';
   parsedCount = 0;
@@ -40,6 +40,68 @@ export class AdminComponent {
 
   showToast = false;
   toastMessage = '';
+
+  // Employees Tab variables
+  newEmpName = '';
+  newEmpEmail = '';
+
+  // History Tab variables
+  expandedCampaignId: number | null = null;
+  pastCampaigns = [
+    {
+      id: 1,
+      name: 'Q2 Outstanding Performers',
+      tier: 5000,
+      date: 'July 15, 2026',
+      totalCount: 12,
+      claimedCount: 10,
+      status: 'Active',
+      details: [
+        { name: 'Jane Doe', email: 'janear.honan@gmail.com', reward: 'Amazon Voucher (₹5,000)', status: 'Claimed' },
+        { name: 'John Smith', email: 'johnintsmith@gmail.com', reward: 'Premium Coffee Set', status: 'Claimed' },
+        { name: 'Alice Cooper', email: 'alice.c@example.com', reward: 'Local Bistro Dining', status: 'Claimed' },
+        { name: 'Bob Dylan', email: 'bob.d@example.com', reward: 'Pending...', status: 'Sent (Emailed)' },
+        { name: 'Clara Oswald', email: 'clara.o@example.com', reward: 'Pending...', status: 'Sent (Emailed)' }
+      ]
+    },
+    {
+      id: 2,
+      name: 'Annual Tech Hackathon Winners',
+      tier: 10000,
+      date: 'June 20, 2026',
+      totalCount: 5,
+      claimedCount: 5,
+      status: 'Completed',
+      details: [
+        { name: 'David Miller', email: 'd.miller@example.com', reward: 'Wireless Active Earbuds', status: 'Claimed' },
+        { name: 'Elena Rostova', email: 'elena.r@example.com', reward: 'Luxury Wellness Experience', status: 'Claimed' },
+        { name: 'Frank N', email: 'frank.n@example.com', reward: 'Smart Home Speaker Hub', status: 'Claimed' }
+      ]
+    },
+    {
+      id: 3,
+      name: 'Q1 Customer Support Rewards',
+      tier: 2500,
+      date: 'April 10, 2026',
+      totalCount: 8,
+      claimedCount: 6,
+      status: 'Expired (Refunded)',
+      details: [
+        { name: 'Grace Hopper', email: 'grace.h@example.com', reward: 'Book Store Gift Card', status: 'Claimed' },
+        { name: 'Harry Potter', email: 'harry.p@example.com', reward: 'Movie Ticket Voucher', status: 'Claimed' },
+        { name: 'Ian Fleming', email: 'ian.f@example.com', reward: 'None (Refunded)', status: 'Expired' }
+      ]
+    }
+  ];
+
+  // Wallet Tab variables
+  walletBalance = 45000;
+  topUpAmount = 10000;
+  transactions = [
+    { date: 'July 21, 2026', desc: 'Refund for unclaimed links (Q1 Support)', type: 'Refund', amount: 5000, isCredit: true },
+    { date: 'July 15, 2026', desc: 'Q2 Outstanding Performers Distribution', type: 'Distribution', amount: 60000, isCredit: false },
+    { date: 'July 01, 2026', desc: 'Top-up via Visa Card ending 4242', type: 'Top Up', amount: 50000, isCredit: true }
+  ];
 
   constructor(private sanitizer: DomSanitizer) {}
 
@@ -83,9 +145,9 @@ export class AdminComponent {
   ];
 
   tiers = [
-    { id: 1, label: 'Tier 1: $25', val: 25 },
-    { id: 2, label: 'Tier 2: $50', val: 50 },
-    { id: 3, label: 'Tier 3: $100', val: 100 }
+    { id: 1, label: 'Tier 1: ₹2,500', val: 2500 },
+    { id: 2, label: 'Tier 2: ₹5,000', val: 5000 },
+    { id: 3, label: 'Tier 3: ₹10,000', val: 10000 }
   ];
 
   employees: Employee[] = [
@@ -104,7 +166,7 @@ export class AdminComponent {
   ];
 
   curatedChoices: Record<number, RewardChoice[]> = {
-    25: [
+    2500: [
       {
         title: 'Gourmet Chocolate Box',
         type: 'icon',
@@ -136,7 +198,7 @@ export class AdminComponent {
         </svg>`
       }
     ],
-    50: [
+    5000: [
       {
         title: 'Premium Coffee Set',
         type: 'image',
@@ -166,7 +228,7 @@ export class AdminComponent {
         </svg>`
       }
     ],
-    100: [
+    10000: [
       {
         title: 'Wireless Active Earbuds',
         type: 'icon',
@@ -210,7 +272,11 @@ export class AdminComponent {
   }
 
   getTierCurrency(): string {
-    return this.selectedTier === 25 ? '$25' : this.selectedTier === 50 ? '$50' : '$100';
+    return '₹' + this.selectedTier.toLocaleString('en-IN');
+  }
+
+  formatCurrency(val: number): string {
+    return '₹' + val.toLocaleString('en-IN');
   }
 
   toggleSort() {
@@ -337,6 +403,110 @@ export class AdminComponent {
   distributeRewards() {
     const activeTierName = this.getTierCurrency();
     const count = this.employees.length;
-    this.triggerToast(`Reward links distributed to ${count} employees for budget ${activeTierName}!`);
+    
+    // Deduct from wallet balance if funds are available
+    const totalCost = this.selectedTier * count;
+    if (this.walletBalance >= totalCost) {
+      this.walletBalance -= totalCost;
+      
+      // Add to transaction history
+      const dateString = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+      this.transactions.unshift({
+        date: dateString,
+        desc: `Distributed campaign: ${this.employees[0]?.campaignName || 'New Rewards Campaign'}`,
+        type: 'Distribution',
+        amount: totalCost,
+        isCredit: false
+      });
+      
+      this.triggerToast(`Reward links distributed to ${count} employees for budget ${activeTierName}! Wallet debited by ₹${totalCost.toLocaleString('en-IN')}`);
+    } else {
+      this.triggerToast(`Reward links distributed to ${count} employees. Note: Wallet balance is low!`);
+    }
+  }
+
+  // Employees Tab methods
+  getActiveCampaignCount(): number {
+    return this.employees.filter(emp => emp.campaignName.trim().length > 0).length;
+  }
+
+  addEmployee() {
+    const name = this.newEmpName.trim();
+    const email = this.newEmpEmail.trim();
+    
+    if (!name || !email) {
+      alert('Please provide both Name and Email');
+      return;
+    }
+    
+    // Unsplash avatars pool for new employees
+    const avatars = [
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120&h=120',
+      'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=120&h=120',
+      'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=120&h=120',
+      'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&q=80&w=120&h=120',
+      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=120&h=120'
+    ];
+    const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+    
+    this.employees.push({
+      name,
+      email,
+      campaignName: '',
+      avatar: randomAvatar
+    });
+    
+    this.triggerToast(`Employee ${name} added successfully!`);
+    this.newEmpName = '';
+    this.newEmpEmail = '';
+  }
+
+  removeEmployee(emp: Employee) {
+    this.employees = this.employees.filter(e => e !== emp);
+    this.triggerToast(`Employee ${emp.name} removed from roster.`);
+  }
+
+  sendQuickReward(emp: Employee) {
+    if (this.walletBalance >= 5000) {
+      this.walletBalance -= 5000;
+      const dateString = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+      this.transactions.unshift({
+        date: dateString,
+        desc: `Quick reward link sent to ${emp.name}`,
+        type: 'Distribution',
+        amount: 5000,
+        isCredit: false
+      });
+      this.triggerToast(`Instant ₹5,000 reward link emailed to ${emp.name}!`);
+    } else {
+      this.triggerToast(`Cannot send reward. Wallet balance is low!`);
+    }
+  }
+
+  // History Tab methods
+  expandCampaign(id: number) {
+    this.expandedCampaignId = this.expandedCampaignId === id ? null : id;
+  }
+
+  // Wallet Tab methods
+  topUpWallet() {
+    const amount = Number(this.topUpAmount);
+    if (isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid positive amount.');
+      return;
+    }
+    
+    this.walletBalance += amount;
+    
+    const dateString = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+    this.transactions.unshift({
+      date: dateString,
+      desc: 'Top-up via Payment Portal',
+      type: 'Top Up',
+      amount: amount,
+      isCredit: true
+    });
+    
+    this.triggerToast(`Wallet balance topped up by ₹${amount.toLocaleString('en-IN')}!`);
   }
 }
