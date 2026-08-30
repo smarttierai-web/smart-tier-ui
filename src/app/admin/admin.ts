@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -103,7 +104,7 @@ export class AdminComponent {
     { date: 'July 01, 2026', desc: 'Top-up via Visa Card ending 4242', type: 'Top Up', amount: 50000, isCredit: true }
   ];
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private router: Router, private sanitizer: DomSanitizer) {}
 
   getSafeHtml(htmlString: string | undefined): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(htmlString || '');
@@ -509,4 +510,11 @@ export class AdminComponent {
     
     this.triggerToast(`Wallet balance topped up by ₹${amount.toLocaleString('en-IN')}!`);
   }
+
+  logout() {
+    sessionStorage.removeItem('isAdminLoggedIn');
+    sessionStorage.removeItem('adminUserEmail');
+    this.router.navigate(['/login']);
+  }
+
 }
