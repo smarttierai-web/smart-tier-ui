@@ -1,0 +1,326 @@
+<div class="signup-container">
+  <!-- Ambient Gradient Background Orbs -->
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+  <div class="glow-orb glow-orb-3"></div>
+
+  <div class="signup-wrapper">
+    <!-- Back to Website Link & Config Trigger -->
+    <div class="top-nav-bar flex justify-between items-center">
+      <a routerLink="/" class="back-home-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Back to SmartTier</span>
+      </a>
+
+      <button type="button" class="config-trigger-btn" (click)="showConfigModal = true" title="Connect your Supabase project keys">
+        <span class="pulse-green"></span>
+        <span>Supabase API Config</span>
+      </button>
+    </div>
+
+    <div class="signup-card shadow-floating">
+      <!-- Left Panel: Brand Showcase -->
+      <div class="brand-panel">
+        <div class="brand-header">
+          <div class="logo-box">
+            <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="smarttier-logo-svg">
+              <style>
+                .logo-base-path { stroke: #10B981; stroke-width: 4.5px; stroke-linecap: round; stroke-linejoin: round; opacity: 0.85; }
+                .logo-glow-path { stroke: #34D399; stroke-width: 7px; stroke-linecap: round; stroke-linejoin: round; opacity: 0.45; animation: pulseGlow 2.5s ease-in-out infinite alternate; }
+                .logo-laser-path { stroke: #F0FDF4; stroke-width: 3.5px; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 45 105; stroke-dashoffset: 150; animation: traceLaser 3s linear infinite; }
+                @keyframes pulseGlow { 0% { opacity: 0.3; filter: drop-shadow(0 0 2px #10B981); } 100% { opacity: 0.8; filter: drop-shadow(0 0 8px #34D399); } }
+                @keyframes traceLaser { from { stroke-dashoffset: 150; } to { stroke-dashoffset: 0; } }
+              </style>
+              <g class="outer-shield-left">
+                <path fill="#1E293B" d="M 50 10 L 18 50 L 36 50 L 50 25 Z" />
+                <path fill="#1E293B" d="M 18 50 L 50 90 L 50 75 L 36 50 Z" />
+              </g>
+              <g class="outer-shield-right">
+                <path fill="#0F172A" d="M 50 10 L 82 50 L 64 50 L 50 25 Z" />
+                <path fill="#0F172A" d="M 82 50 L 50 90 L 50 75 L 64 50 Z" />
+              </g>
+              <path class="logo-base-path" d="M 48 38 C 46 32, 44 28, 44 28 C 56 28, 64 38, 64 50 C 64 62, 56 72, 56 72 C 44 72, 36 62, 36 50 C 36 38, 44 28, 44 28 C 44 28, 51 41, 54 48" />
+              <path class="logo-glow-path" d="M 48 38 C 46 32, 44 28, 44 28 C 56 28, 64 38, 64 50 C 64 62, 56 72, 56 72 C 44 72, 36 62, 36 50 C 36 38, 44 28, 44 28 C 44 28, 51 41, 54 48" />
+              <path class="logo-laser-path" d="M 48 38 C 46 32, 44 28, 44 28 C 56 28, 64 38, 64 50 C 64 62, 56 72, 56 72 C 44 72, 36 62, 36 50 C 36 38, 44 28, 44 28 C 44 28, 51 41, 54 48" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="brand-title">Smart<span class="text-indigo">Tier</span></h2>
+            <span class="brand-badge">Beta Launch Pilot</span>
+          </div>
+        </div>
+
+        <div class="brand-body">
+          <div class="pilot-offer-tag">
+            <span class="offer-pill">30-Day Free Pilot</span>
+            <span class="offer-sub">Platform fees 100% waived</span>
+          </div>
+
+          <h3 class="brand-headline">Scale Recognition Without Budget Waste.</h3>
+          <p class="brand-desc">Join foundational high-growth teams using SmartTier's automated pay-as-you-claim reward engine.</p>
+
+          <div class="brand-perks">
+            <div class="perk-item">
+              <span class="perk-check">✓</span>
+              <span><strong>Instant Roster Sync</strong> — Upload CSV lists in seconds</span>
+            </div>
+            <div class="perk-item">
+              <span class="perk-check">✓</span>
+              <span><strong>100% Auto-Refunds</strong> on unclaimed gifts after 30 days</span>
+            </div>
+            <div class="perk-item">
+              <span class="perk-check">✓</span>
+              <span><strong>Global Catalog</strong> with gift cards, dining, wellness & tech</span>
+            </div>
+            <div class="perk-item">
+              <span class="perk-check">✓</span>
+              <span><strong>Supabase Backend Integration</strong> with real-time audit logs</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="brand-footer">
+          <div class="security-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>Enterprise-Grade Security &middot; PostgreSQL & Supabase Powered</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Signup Form -->
+      <div class="form-panel">
+        <div class="form-header">
+          <span class="form-kicker">Get Started</span>
+          <h1 class="form-title font-display">Create Admin Account</h1>
+          <p class="form-subtitle">Setup your company workspace to start dispatching smart reward links.</p>
+        </div>
+
+        <!-- Error Alert -->
+        <div class="alert alert-error" *ngIf="errorMessage">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <!-- Success Alert -->
+        <div class="alert alert-success" *ngIf="successMessage">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          <span>{{ successMessage }}</span>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" class="signup-form" *ngIf="!isRegistered">
+          <div class="form-row grid-2">
+            <!-- Full Name -->
+            <div class="form-group">
+              <label for="fullName" class="field-label">Your Name</label>
+              <div class="input-container">
+                <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <input
+                  id="fullName"
+                  type="text"
+                  name="fullName"
+                  [(ngModel)]="fullName"
+                  placeholder="Jane Doe"
+                  required
+                  class="form-control"
+                />
+              </div>
+            </div>
+
+            <!-- Company Name -->
+            <div class="form-group">
+              <label for="companyName" class="field-label">Company Name</label>
+              <div class="input-container">
+                <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+                <input
+                  id="companyName"
+                  type="text"
+                  name="companyName"
+                  [(ngModel)]="companyName"
+                  placeholder="Acme Corp"
+                  required
+                  class="form-control"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Work Email -->
+          <div class="form-group">
+            <label for="signup-email" class="field-label">Work Email</label>
+            <div class="input-container">
+              <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <input
+                id="signup-email"
+                type="email"
+                name="email"
+                [(ngModel)]="email"
+                placeholder="jane@company.com"
+                required
+                autocomplete="email"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <!-- Password & Confirm Password Row -->
+          <div class="form-row grid-2">
+            <div class="form-group">
+              <label for="signup-password" class="field-label">Password</label>
+              <div class="input-container">
+                <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <input
+                  id="signup-password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  name="password"
+                  [(ngModel)]="password"
+                  placeholder="Min. 6 chars"
+                  required
+                  class="form-control"
+                />
+                <button type="button" class="eye-btn" (click)="togglePassword()">
+                  <svg *ngIf="!showPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg *ngIf="showPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="confirm-password" class="field-label">Confirm Password</label>
+              <div class="input-container">
+                <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                <input
+                  id="confirm-password"
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  name="confirmPassword"
+                  [(ngModel)]="confirmPassword"
+                  placeholder="Repeat password"
+                  required
+                  class="form-control"
+                />
+                <button type="button" class="eye-btn" (click)="toggleConfirmPassword()">
+                  <svg *ngIf="!showConfirmPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg *ngIf="showConfirmPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Password Strength Indicator -->
+          <div class="strength-meter" *ngIf="password">
+            <div class="strength-bar-bg">
+              <div class="strength-bar-fill" [style.width.%]="getPasswordStrength().percent" [style.backgroundColor]="getPasswordStrength().color"></div>
+            </div>
+            <span class="strength-text" [style.color]="getPasswordStrength().color">
+              Strength: {{ getPasswordStrength().level }}
+            </span>
+          </div>
+
+          <!-- Terms Checkbox -->
+          <div class="form-options">
+            <label class="terms-label">
+              <input type="checkbox" name="agreeTerms" [(ngModel)]="agreeTerms" class="custom-checkbox" />
+              <span>I agree to the <a href="#" class="inline-link">Terms of Service</a> &amp; <a href="#" class="inline-link">Privacy Policy</a>.</span>
+            </label>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary btn-submit shadow-floating" [disabled]="isLoading">
+            <span *ngIf="!isLoading" class="flex items-center justify-center gap-2">
+              <span>Create Account &amp; Start Pilot</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </span>
+            <span *ngIf="isLoading" class="flex items-center justify-center gap-2">
+              <span class="spinner-circle"></span>
+              <span>Registering with Supabase...</span>
+            </span>
+          </button>
+        </form>
+
+        <div class="form-footer">
+          <p class="footer-text">
+            Already have an enterprise account?
+            <a routerLink="/login" class="login-link font-bold text-indigo">Sign In</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase Project Credentials Modal -->
+  <div class="modal-backdrop" *ngIf="showConfigModal" (click)="showConfigModal = false">
+    <div class="modal-card bg-white p-8 rounded-xl shadow-floating border-thin" (click)="$event.stopPropagation()">
+      <div class="modal-header flex justify-between items-center mb-4 pb-2 border-b">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">⚡</span>
+          <h3 class="text-lg font-bold text-charcoal font-display">Supabase Backend Configuration</h3>
+        </div>
+        <button type="button" class="close-btn" (click)="showConfigModal = false">&times;</button>
+      </div>
+
+      <p class="text-xs text-slate mb-6">
+        Paste your Supabase Project URL &amp; Public Anon Key from your <strong>Supabase Dashboard &rarr; Project Settings &rarr; API</strong>.
+      </p>
+
+      <form (submit)="saveSupabaseConfig()" class="flex flex-col gap-4">
+        <div class="form-group">
+          <label class="field-label text-xs">Supabase Project URL</label>
+          <input
+            type="url"
+            [(ngModel)]="customSupabaseUrl"
+            name="customUrl"
+            placeholder="https://your-project.supabase.co"
+            required
+            class="form-control text-xs"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="field-label text-xs">Supabase Public Anon Key</label>
+          <textarea
+            [(ngModel)]="customSupabaseKey"
+            name="customKey"
+            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            rows="3"
+            required
+            class="form-control text-xs font-mono"
+          ></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-4">
+          <button type="button" class="btn btn-secondary btn-sm" (click)="showConfigModal = false">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save &amp; Connect</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

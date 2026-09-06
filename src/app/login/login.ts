@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +11,10 @@ import { Router, RouterLink } from '@angular/router';
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   email = '';
   password = '';
   rememberMe = true;
@@ -18,7 +22,14 @@ export class LoginComponent {
   errorMessage = '';
   isLoading = false;
 
-  constructor(private router: Router) {}
+  ngOnInit() {
+    // Auto-fill remembered email if saved previously
+    const savedEmail = localStorage.getItem('st_remembered_email');
+    if (savedEmail) {
+      this.email = savedEmail;
+      this.rememberMe = true;
+    }
+  }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -30,28 +41,92 @@ export class LoginComponent {
     this.errorMessage = '';
   }
 
-  onSubmit() {
-    if (!this.email || !this.password) {
-      this.errorMessage = 'Please enter both email and password.';
+  // Front-end email validation helper
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  }
+
+  async onSubmit() {
+    this.errorMessage = '';
+
+    const cleanEmail = this.email.trim();
+    const cleanPassword = this.password;
+
+    // 1. Frontend validation: Empty field checks
+    if (!cleanEmail && !cleanPassword) {
+      this.errorMessage = 'Please enter your work email and password.';
+      return;
+    }
+
+    if (!cleanEmail) {
+      this.errorMessage = 'Please enter your work email address.';
+      return;
+    }
+
+    // 2. Frontend validation: Email format check
+    if (!this.isValidEmail(cleanEmail)) {
+      this.errorMessage = 'Please enter a valid work email address (e.g., name@company.com).';
+      return;
+    }
+
+    if (!cleanPassword) {
+      this.errorMessage = 'Please enter your password.';
+      return;
+    }
+
+    // 3. Frontend validation: Password minimum length
+    if (cleanPassword.length < 6) {
+      this.errorMessage = 'Password must be at least 6 characters.';
       return;
     }
 
     this.isLoading = true;
-    this.errorMessage = '';
 
-    // Mock Authentication Delay
-    setTimeout(() => {
-      if (
-        (this.email.trim().toLowerCase() === 'admin@smarttier.com' && this.password === 'admin123') ||
-        (this.email.trim().toLowerCase() === 'demo@smarttier.com' && this.password === 'demo123')
-      ) {
-        sessionStorage.setItem('isAdminLoggedIn', 'true');
-        sessionStorage.setItem('adminUserEmail', this.email.trim());
-        this.router.navigate(['/admin']);
-      } else {
-        this.errorMessage = 'Invalid email or password. Use demo credentials (admin@smarttier.com / admin123).';
+    try {
+      // 4. Supabase Backend validation
+      const response = await this.authService.signIn(cleanEmail, cleanPassword) as any;
+
+      if (response.error) {
+        const rawError = response.error;
+        const errorText: string = typeof rawError === 'string'
+          ? rawError
+          : (rawError?.message || rawError?.error_description || 'Authentication failed.');
+
+        const msg = errorText.toLowerCase();
+
+        if (msg.includes('invalid login credentials') || msg.includes('invalid_grant') || msg.includes('invalid email or password')) {
+          this.errorMessage = 'Invalid email or password. Please verify your credentials and try again.';
+        } else if (msg.includes('email not confirmed')) {
+          this.errorMessage = 'Please verify your email address before signing in (check your inbox or spam folder).';
+        } else if (msg.includes('rate limit')) {
+          this.errorMessage = 'Too many failed login attempts. Please wait a moment before trying again.';
+        } else {
+          this.errorMessage = errorText;
+        }
         this.isLoading = false;
+        return;
       }
-    }, 1000);
+
+      // 5. Handle 'Remember Me' device preference
+      if (this.rememberMe) {
+        localStorage.setItem('st_remembered_email', cleanEmail);
+      } else {
+        localStorage.removeItem('st_remembered_email');
+      }
+
+      // 6. Set active admin session and route to dashboard
+      sessionStorage.setItem('isAdminLoggedIn', 'true');
+      sessionStorage.setItem('adminUserEmail', cleanEmail);
+
+      setTimeout(() => {
+        this.router.navigate(['/admin']);
+      }, 500);
+
+    } catch (err: any) {
+      this.errorMessage = err?.message || 'An unexpected error occurred during sign in.';
+    } finally {
+      this.isLoading = false;
+    }
   }
 }
