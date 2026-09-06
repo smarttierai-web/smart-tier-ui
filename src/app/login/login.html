@@ -154,7 +154,7 @@
           <span class="demo-chip-action">Auto-fill →</span>
         </div>
 
-        <!-- Error Alert -->
+        <!-- Error Alert Banner -->
         <div class="alert-error" *ngIf="errorMessage">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round">
@@ -219,7 +219,7 @@
             </label>
           </div>
 
-          <button type="submit" class="btn btn-primary btn-submit" [disabled]="isLoading">
+          <button type="submit" class="btn btn-primary btn-submit" [disabled]="isLoading" (click)="onSubmit()">
             <span *ngIf="!isLoading" class="flex items-center justify-center gap-2">
               <span>Sign In to Admin Portal</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -244,6 +244,32 @@
             Need assistance? <a href="mailto:support@smarttier.com" class="support-link">Contact Support</a>
           </p>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WRONG CREDENTIAL MODAL POP-UP -->
+  <div class="modal-backdrop" *ngIf="showErrorModal" (click)="closeErrorModal()">
+    <div class="modal-card shadow-floating" (click)="$event.stopPropagation()">
+      <div class="modal-icon-badge">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+
+      <h3 class="modal-title font-display">{{ errorModalTitle }}</h3>
+      <p class="modal-description">{{ errorModalMessage }}</p>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary modal-btn" (click)="closeErrorModal()">
+          Try Again
+        </button>
+        <a routerLink="/signup" (click)="closeErrorModal()" class="btn btn-outline modal-btn">
+          Create New Account
+        </a>
       </div>
     </div>
   </div>

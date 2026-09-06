@@ -45,7 +45,11 @@ export class AuthService {
     }
   }
 
-  public isConfigured(): boolean {
+  public getClient() {
+    return this.supabase;
+  }
+
+  isConfigured(): boolean {
     const url = localStorage.getItem('supabase_url') || environment.supabaseUrl;
     return !!(this.supabase && url && !url.includes('xyzcompany.supabase.co'));
   }

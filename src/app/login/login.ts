@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -14,6 +14,7 @@ import { AuthService } from '../services/auth.service';
 export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   email = '';
   password = '';
@@ -22,8 +23,12 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   isLoading = false;
 
+  // Error Modal State
+  showErrorModal = false;
+  errorModalTitle = 'Incorrect Credentials';
+  errorModalMessage = '';
+
   ngOnInit() {
-    // Auto-fill remembered email if saved previously
     const savedEmail = localStorage.getItem('st_remembered_email');
     if (savedEmail) {
       this.email = savedEmail;
@@ -39,9 +44,13 @@ export class LoginComponent implements OnInit {
     this.email = 'admin@smarttier.com';
     this.password = 'admin123';
     this.errorMessage = '';
+    this.showErrorModal = false;
   }
 
-  // Front-end email validation helper
+  closeErrorModal() {
+    this.showErrorModal = false;
+  }
+
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
@@ -49,35 +58,38 @@ export class LoginComponent implements OnInit {
 
   async onSubmit() {
     this.errorMessage = '';
+    this.showErrorModal = false;
 
     const cleanEmail = this.email.trim();
     const cleanPassword = this.password;
 
-    // 1. Frontend validation: Empty field checks
-    if (!cleanEmail && !cleanPassword) {
-      this.errorMessage = 'Please enter your work email and password.';
+    // 1. Frontend validation: Empty fields
+    if (!cleanEmail || !cleanPassword) {
+      this.errorModalTitle = 'Missing Credentials';
+      this.errorModalMessage = 'Please enter both your work email and password to sign in.';
+      this.errorMessage = this.errorModalMessage;
+      this.showErrorModal = true;
+      this.cdr.detectChanges();
       return;
     }
 
-    if (!cleanEmail) {
-      this.errorMessage = 'Please enter your work email address.';
-      return;
-    }
-
-    // 2. Frontend validation: Email format check
+    // 2. Frontend validation: Email format
     if (!this.isValidEmail(cleanEmail)) {
-      this.errorMessage = 'Please enter a valid work email address (e.g., name@company.com).';
-      return;
-    }
-
-    if (!cleanPassword) {
-      this.errorMessage = 'Please enter your password.';
+      this.errorModalTitle = 'Invalid Email Format';
+      this.errorModalMessage = 'Please enter a valid work email address (e.g., name@company.com).';
+      this.errorMessage = this.errorModalMessage;
+      this.showErrorModal = true;
+      this.cdr.detectChanges();
       return;
     }
 
     // 3. Frontend validation: Password minimum length
     if (cleanPassword.length < 6) {
-      this.errorMessage = 'Password must be at least 6 characters.';
+      this.errorModalTitle = 'Password Too Short';
+      this.errorModalMessage = 'Password must be at least 6 characters long.';
+      this.errorMessage = this.errorModalMessage;
+      this.showErrorModal = true;
+      this.cdr.detectChanges();
       return;
     }
 
@@ -96,26 +108,34 @@ export class LoginComponent implements OnInit {
         const msg = errorText.toLowerCase();
 
         if (msg.includes('invalid login credentials') || msg.includes('invalid_grant') || msg.includes('invalid email or password')) {
-          this.errorMessage = 'Invalid email or password. Please verify your credentials and try again.';
+          this.errorModalTitle = 'Incorrect Email or Password';
+          this.errorModalMessage = 'The email or password you entered does not match our records. Please verify your credentials or create a new account.';
         } else if (msg.includes('email not confirmed')) {
-          this.errorMessage = 'Please verify your email address before signing in (check your inbox or spam folder).';
+          this.errorModalTitle = 'Email Not Verified';
+          this.errorModalMessage = 'Your email address has not been confirmed yet. Please check your inbox or spam folder to complete registration.';
         } else if (msg.includes('rate limit')) {
-          this.errorMessage = 'Too many failed login attempts. Please wait a moment before trying again.';
+          this.errorModalTitle = 'Too Many Attempts';
+          this.errorModalMessage = 'Too many failed login attempts detected. Please wait a moment before trying again.';
         } else {
-          this.errorMessage = errorText;
+          this.errorModalTitle = 'Authentication Failed';
+          this.errorModalMessage = errorText;
         }
+
+        this.errorMessage = this.errorModalMessage;
+        this.showErrorModal = true;
         this.isLoading = false;
+        this.cdr.detectChanges();
         return;
       }
 
-      // 5. Handle 'Remember Me' device preference
+      // 5. Handle 'Remember Me'
       if (this.rememberMe) {
         localStorage.setItem('st_remembered_email', cleanEmail);
       } else {
         localStorage.removeItem('st_remembered_email');
       }
 
-      // 6. Set active admin session and route to dashboard
+      // 6. Set active admin session and navigate
       sessionStorage.setItem('isAdminLoggedIn', 'true');
       sessionStorage.setItem('adminUserEmail', cleanEmail);
 
@@ -124,9 +144,14 @@ export class LoginComponent implements OnInit {
       }, 500);
 
     } catch (err: any) {
-      this.errorMessage = err?.message || 'An unexpected error occurred during sign in.';
+      this.errorModalTitle = 'Unexpected Error';
+      this.errorModalMessage = err?.message || 'An unexpected error occurred during sign in.';
+      this.errorMessage = this.errorModalMessage;
+      this.showErrorModal = true;
+      this.cdr.detectChanges();
     } finally {
       this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 }

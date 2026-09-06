@@ -1,5 +1,7 @@
 import { Router } from '@angular/router';
-import { Component } from '@angular/core';
+import { EmployeeService, Employee } from '../services/employee.service';
+import { RewardService, Reward } from '../services/reward.service';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -9,20 +11,9 @@ interface NavItem {
   icon: string;
 }
 
-interface Employee {
-  name: string;
-  email: string;
-  campaignName: string;
-  avatar: string;
-}
 
-interface RewardChoice {
-  title: string;
-  type: 'image' | 'icon';
-  image?: string;
-  iconBg?: string;
-  iconSvg?: string;
-}
+
+
 
 @Component({
   selector: 'app-admin',
@@ -31,7 +22,9 @@ interface RewardChoice {
   templateUrl: './admin.html',
   styleUrl: './admin.scss'
 })
-export class AdminComponent {
+export class AdminComponent implements OnInit {
+  private employeeService = inject(EmployeeService);
+  private rewardService = inject(RewardService);
   activeTab = 'Dashboard';
   selectedTier = 5000;
   isDragging = false;
@@ -106,6 +99,10 @@ export class AdminComponent {
 
   constructor(private router: Router, private sanitizer: DomSanitizer) {}
 
+  async ngOnInit() {
+    await Promise.all([this.employeeService.loadEmployees(), this.rewardService.loadRewards()]);
+  }
+
   getSafeHtml(htmlString: string | undefined): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(htmlString || '');
   }
@@ -151,115 +148,22 @@ export class AdminComponent {
     { id: 3, label: 'Tier 3: ₹10,000', val: 10000 }
   ];
 
-  employees: Employee[] = [
-    {
-      name: 'Jane Doe',
-      email: 'janear.honan@gmail.com',
-      campaignName: '',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120&h=120'
-    },
-    {
-      name: 'John Smith',
-      email: 'johnintsmith@gmail.com',
-      campaignName: '',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120&h=120'
-    }
-  ];
+  get employees(): Employee[] {
+    const list = [...this.employeeService.employees()];
+    return list.sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+      if (nameA < nameB) return this.sortAsc ? -1 : 1;
+      if (nameA > nameB) return this.sortAsc ? 1 : -1;
+      return 0;
+    });
+  }
 
-  curatedChoices: Record<number, RewardChoice[]> = {
-    2500: [
-      {
-        title: 'Gourmet Chocolate Box',
-        type: 'icon',
-        iconBg: '#FEF3C7',
-        iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-          <path d="M9 3v18" />
-          <path d="M15 3v18" />
-          <path d="M3 9h18" />
-          <path d="M3 15h18" />
-        </svg>`
-      },
-      {
-        title: 'Book Store Gift Card',
-        type: 'icon',
-        iconBg: '#E0F2FE',
-        iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-          <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5v-15z" />
-        </svg>`
-      },
-      {
-        title: 'Movie Ticket Voucher',
-        type: 'icon',
-        iconBg: '#FCE7F3',
-        iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DB2777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="6" width="20" height="12" rx="2" />
-          <line x1="6" y1="12" x2="18" y2="12" />
-        </svg>`
-      }
-    ],
-    5000: [
-      {
-        title: 'Premium Coffee Set',
-        type: 'image',
-        image: '/premium_coffee_set.png',
-        iconBg: '',
-        iconSvg: ''
-      },
-      {
-        title: 'Electronics Voucher',
-        type: 'icon',
-        iconBg: '#F3E8FF',
-        iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9333EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
-          <line x1="7" y1="2" x2="7" y2="22" />
-          <line x1="17" y1="2" x2="17" y2="22" />
-          <line x1="2" y1="12" x2="22" y2="12" />
-        </svg>`
-      },
-      {
-        title: 'Local Experience Card',
-        type: 'icon',
-        iconBg: '#E2FDF2',
-        iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-          <circle cx="8.5" cy="8.5" r="1.5" />
-          <polyline points="21 15 16 10 5 21" />
-        </svg>`
-      }
-    ],
-    10000: [
-      {
-        title: 'Wireless Active Earbuds',
-        type: 'icon',
-        iconBg: '#EEF2FF',
-        iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
-          <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
-        </svg>`
-      },
-      {
-        title: 'Luxury Wellness Experience',
-        type: 'icon',
-        iconBg: '#F5F3FF',
-        iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-        </svg>`
-      },
-      {
-        title: 'Smart Home Speaker Hub',
-        type: 'icon',
-        iconBg: '#ECFDF5',
-        iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
-          <circle cx="12" cy="14" r="4" />
-          <line x1="12" y1="6" x2="12.01" y2="6" />
-        </svg>`
-      }
-    ]
-  };
+  get isEmployeesLoading(): boolean {
+    return this.employeeService.isLoading();
+  }
 
+  
   setActiveTab(name: string) {
     this.activeTab = name;
   }
@@ -268,8 +172,12 @@ export class AdminComponent {
     this.selectedTier = val;
   }
 
-  getChoicesForTier(): RewardChoice[] {
-    return this.curatedChoices[this.selectedTier] || [];
+  getChoicesForTier(): Reward[] {
+    return this.rewardService.getRewardsForTier(this.selectedTier);
+  }
+
+  get isRewardsLoading(): boolean {
+    return this.rewardService.isLoading();
   }
 
   getTierCurrency(): string {
@@ -282,13 +190,6 @@ export class AdminComponent {
 
   toggleSort() {
     this.sortAsc = !this.sortAsc;
-    this.employees.sort((a, b) => {
-      const nameA = a.name.toLowerCase();
-      const nameB = b.name.toLowerCase();
-      if (nameA < nameB) return this.sortAsc ? -1 : 1;
-      if (nameA > nameB) return this.sortAsc ? 1 : -1;
-      return 0;
-    });
   }
 
   // Drag and Drop files
@@ -338,12 +239,11 @@ export class AdminComponent {
     reader.readAsText(file);
   }
 
-  parseCSV(text: string) {
-    const lines = text.split('\n');
-    const newEmployees: Employee[] = [];
+  async parseCSV(text: string) {
+    const lines = text.split(/\r?\n/);
+    const newEmployees: Omit<Employee, 'id'>[] = [];
     let parsedCount = 0;
 
-    // A list of visual avatars to pick randomly for newly parsed employees
     const avatars = [
       'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120&h=120',
       'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=120&h=120',
@@ -356,7 +256,6 @@ export class AdminComponent {
       const line = lines[i].trim();
       if (!line) continue;
 
-      // Skip header row if it starts with 'name' or 'email'
       if (i === 0 && (line.toLowerCase().includes('name') || line.toLowerCase().includes('email'))) {
         continue;
       }
@@ -371,7 +270,9 @@ export class AdminComponent {
             name,
             email,
             campaignName: '',
-            avatar: randAvatar
+            avatar: randAvatar,
+            department: 'General',
+            status: 'Active'
           });
           parsedCount++;
         }
@@ -379,9 +280,9 @@ export class AdminComponent {
     }
 
     if (newEmployees.length > 0) {
-      this.employees = [...this.employees, ...newEmployees];
+      await this.employeeService.bulkAddEmployees(newEmployees);
       this.parsedCount = parsedCount;
-      this.triggerToast(`Successfully loaded ${parsedCount} new employees from CSV.`);
+      this.triggerToast();
     } else {
       alert('Could not find any valid employees (Name, Email format) in the CSV.');
     }
@@ -393,7 +294,7 @@ export class AdminComponent {
     this.parsedCount = 0;
   }
 
-  triggerToast(msg: string) {
+  triggerToast(msg: string = 'Operation completed successfully!') {
     this.toastMessage = msg;
     this.showToast = true;
     setTimeout(() => {
@@ -431,7 +332,7 @@ export class AdminComponent {
     return this.employees.filter(emp => emp.campaignName.trim().length > 0).length;
   }
 
-  addEmployee() {
+  async addEmployee() {
     const name = this.newEmpName.trim();
     const email = this.newEmpEmail.trim();
     
@@ -440,7 +341,6 @@ export class AdminComponent {
       return;
     }
     
-    // Unsplash avatars pool for new employees
     const avatars = [
       'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120&h=120',
       'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=120&h=120',
@@ -450,21 +350,23 @@ export class AdminComponent {
     ];
     const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
     
-    this.employees.push({
+    await this.employeeService.addEmployee({
       name,
       email,
       campaignName: '',
-      avatar: randomAvatar
+      avatar: randomAvatar,
+      department: 'General',
+      status: 'Active'
     });
     
-    this.triggerToast(`Employee ${name} added successfully!`);
+    this.triggerToast();
     this.newEmpName = '';
     this.newEmpEmail = '';
   }
 
-  removeEmployee(emp: Employee) {
-    this.employees = this.employees.filter(e => e !== emp);
-    this.triggerToast(`Employee ${emp.name} removed from roster.`);
+  async removeEmployee(emp: Employee) {
+    await this.employeeService.deleteEmployee(emp);
+    this.triggerToast();
   }
 
   sendQuickReward(emp: Employee) {
@@ -511,6 +413,44 @@ export class AdminComponent {
     this.triggerToast(`Wallet balance topped up by ₹${amount.toLocaleString('en-IN')}!`);
   }
 
+  
+  // Dynamic Reward Catalog Modal
+  showAddRewardModal = false;
+  newRewardTitle = '';
+  newRewardDesc = '';
+  newRewardCategory = 'Electronics';
+  newRewardTier = 5000;
+
+  openAddRewardModal() {
+    this.newRewardTier = this.selectedTier;
+    this.showAddRewardModal = true;
+  }
+
+  closeAddRewardModal() {
+    this.showAddRewardModal = false;
+  }
+
+  async saveNewReward() {
+    if (!this.newRewardTitle.trim()) {
+      alert('Please enter a reward title.');
+      return;
+    }
+
+    await this.rewardService.addReward({
+      tier: Number(this.newRewardTier),
+      title: this.newRewardTitle.trim(),
+      description: this.newRewardDesc.trim(),
+      type: 'icon',
+      category: this.newRewardCategory,
+      iconBg: '#E0E7FF'
+    });
+
+    this.triggerToast(`New reward "${this.newRewardTitle}" added to Tier ₹${Number(this.newRewardTier).toLocaleString('en-IN')}!`);
+    this.showAddRewardModal = false;
+    this.newRewardTitle = '';
+    this.newRewardDesc = '';
+  }
+
   logout() {
     sessionStorage.removeItem('isAdminLoggedIn');
     sessionStorage.removeItem('adminUserEmail');
@@ -518,3 +458,4 @@ export class AdminComponent {
   }
 
 }
+
